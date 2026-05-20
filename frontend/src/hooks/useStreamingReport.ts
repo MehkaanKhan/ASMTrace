@@ -27,7 +27,8 @@ export function useStreamingReport() {
     let accumulated = ''
 
     try {
-      const res = await fetch(`/api/report/${traceId}`, {
+      const apiBase = import.meta.env.VITE_API_BASE_URL ?? '/api'
+      const res = await fetch(`${apiBase}/report/${traceId}`, {
         signal: abortRef.current.signal,
       })
 

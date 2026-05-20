@@ -30,25 +30,45 @@ export default function LoginModal({ onClose }: Props) {
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ??
-        'Request failed'
+        'Could not reach the server. The backend is not deployed in this demo.'
       setError(msg)
     } finally {
       setLoading(false)
     }
   }
 
+  const inputStyle = {
+    background: 'var(--bg-base)',
+    border: '1px solid var(--border-subtle)',
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-sm rounded-xl border border-zinc-700 bg-zinc-900 p-6 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+      <div
+        className="w-full max-w-sm rounded-xl p-6 shadow-2xl"
+        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
+      >
+        {/* Header */}
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-zinc-200">Account</h2>
+          <button onClick={onClose} className="text-zinc-600 hover:text-zinc-400 text-lg leading-none">×</button>
+        </div>
+
         {/* Tabs */}
-        <div className="mb-5 flex gap-1 rounded-lg bg-zinc-800 p-1">
+        <div
+          className="mb-5 flex gap-1 rounded-lg p-1"
+          style={{ background: 'var(--bg-elevated)' }}
+        >
           {(['login', 'register'] as const).map((m) => (
             <button
               key={m}
               onClick={() => setMode(m)}
-              className={`flex-1 rounded py-1.5 text-sm font-medium capitalize transition-colors ${
-                mode === m ? 'bg-indigo-600 text-white' : 'text-zinc-400 hover:text-zinc-200'
-              }`}
+              className="flex-1 rounded py-1.5 text-xs font-semibold capitalize transition-colors"
+              style={
+                mode === m
+                  ? { background: 'rgba(99,102,241,0.2)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.3)' }
+                  : { color: '#71717a', border: '1px solid transparent' }
+              }
             >
               {m}
             </button>
@@ -62,7 +82,8 @@ export default function LoginModal({ onClose }: Props) {
               placeholder="Display name (optional)"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="rounded border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              style={inputStyle}
+              className="rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
             />
           )}
           <input
@@ -71,7 +92,8 @@ export default function LoginModal({ onClose }: Props) {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            style={inputStyle}
+            className="rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
           />
           <input
             type="password"
@@ -79,10 +101,11 @@ export default function LoginModal({ onClose }: Props) {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            style={inputStyle}
+            className="rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
           />
           {mode === 'register' && (
-            <label className="flex items-center gap-2 text-sm text-zinc-400">
+            <label className="flex items-center gap-2 text-xs text-zinc-500">
               <input
                 type="checkbox"
                 checked={isProfessor}
@@ -94,24 +117,22 @@ export default function LoginModal({ onClose }: Props) {
           )}
 
           {error && (
-            <p className="rounded bg-red-900/40 px-3 py-2 text-sm text-red-400">{error}</p>
+            <p
+              className="rounded-lg px-3 py-2 text-xs text-red-400"
+              style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
+            >
+              {error}
+            </p>
           )}
 
           <button
             type="submit"
             disabled={loading}
-            className="mt-1 rounded bg-indigo-600 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-50"
+            className="btn-primary mt-1 rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
           >
             {loading ? 'Loading…' : mode === 'login' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
-
-        <button
-          onClick={onClose}
-          className="mt-4 w-full text-center text-xs text-zinc-500 hover:text-zinc-300"
-        >
-          Cancel
-        </button>
       </div>
     </div>
   )
