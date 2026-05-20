@@ -1,0 +1,1069 @@
+{
+  "id": "keylogger",
+  "displayName": "Keylogger",
+  "description": "Opens a raw input device, reads keystrokes in a loop, and writes them to a hidden file in /tmp.",
+  "architecture": "x86_64",
+  "riskLevel": "SUSPICIOUS",
+  "tags": ["keylogger", "input", "filesystem", "loop", "suspicious"],
+  "trace": {
+    "programName": "keylogger",
+    "architecture": "x86_64",
+    "totalInstructions": 42,
+    "steps": [
+      {
+        "index": 0,
+        "address": "0x00401000",
+        "bytes": "48 c7 c0 02 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x2",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000002",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401007",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load syscall number 2 (sys_open) — prepares to open a file path"
+      },
+      {
+        "index": 1,
+        "address": "0x00401007",
+        "bytes": "48 8d 3d f2 0f 00 00",
+        "mnemonic": "lea",
+        "operands": "rdi, [rip+0xff2]",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000002",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000402000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040100e",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load address of string '/dev/input/event0' into RDI — path to the raw keyboard input device"
+      },
+      {
+        "index": 2,
+        "address": "0x0040100e",
+        "bytes": "48 c7 c6 00 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rsi, 0x0",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000002",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000402000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401015",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Set flags = O_RDONLY (0) — open in read-only mode to monitor input events"
+      },
+      {
+        "index": 3,
+        "address": "0x00401015",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "open",
+        "registers": {
+          "rax": "0x0000000000000003",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x00401017",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000402000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401017",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_open('/dev/input/event0', O_RDONLY) — returns FD 3; gaining read access to raw keyboard hardware events"
+      },
+      {
+        "index": 4,
+        "address": "0x00401017",
+        "bytes": "48 89 c3",
+        "mnemonic": "mov",
+        "operands": "rbx, rax",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000003",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401017",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000402000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040101a",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Save the input FD (3) in RBX — callee-saved register used to preserve the FD across future syscalls"
+      },
+      {
+        "index": 5,
+        "address": "0x0040101a",
+        "bytes": "48 c7 c0 02 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x2",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000002",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401017",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401021",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load sys_open syscall number again — about to open the output log file"
+      },
+      {
+        "index": 6,
+        "address": "0x00401021",
+        "bytes": "48 8d 3d e9 0f 00 00",
+        "mnemonic": "lea",
+        "operands": "rdi, [rip+0xfe9]",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000002",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401017",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000402012",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401028",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load address of string '/tmp/.klog' — a hidden dot-file in /tmp used as the keystroke log"
+      },
+      {
+        "index": 7,
+        "address": "0x00401028",
+        "bytes": "48 c7 c6 41 02 00 00",
+        "mnemonic": "mov",
+        "operands": "rsi, 0x241",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000002",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401017",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000241",
+          "rdi": "0x0000000000402012",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040102f",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Set flags = 0x241 (O_WRONLY|O_CREAT|O_APPEND) — create the file if absent, append new keystrokes without overwriting"
+      },
+      {
+        "index": 8,
+        "address": "0x0040102f",
+        "bytes": "48 c7 c2 a4 01 00 00",
+        "mnemonic": "mov",
+        "operands": "rdx, 0x1a4",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000002",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401017",
+          "rdx": "0x00000000000001a4",
+          "rsi": "0x0000000000000241",
+          "rdi": "0x0000000000402012",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401036",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Set mode = 0x1a4 (octal 0644) — owner can read/write, group and world read-only"
+      },
+      {
+        "index": 9,
+        "address": "0x00401036",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "open",
+        "registers": {
+          "rax": "0x0000000000000004",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401038",
+          "rdx": "0x00000000000001a4",
+          "rsi": "0x0000000000000241",
+          "rdi": "0x0000000000402012",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401038",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_open('/tmp/.klog', O_WRONLY|O_CREAT|O_APPEND, 0644) — returns FD 4; covert hidden-dot log file created"
+      },
+      {
+        "index": 10,
+        "address": "0x00401038",
+        "bytes": "49 89 c4",
+        "mnemonic": "mov",
+        "operands": "r12, rax",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000004",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401038",
+          "rdx": "0x00000000000001a4",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000402012",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040103b",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Save log file FD (4) in R12 — preserved across the read loop iterations"
+      },
+      {
+        "index": 11,
+        "address": "0x0040103b",
+        "bytes": "48 c7 c0 00 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x0",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401038",
+          "rdx": "0x00000000000001a4",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401042",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load syscall number 0 (sys_read) — beginning of the keystroke capture loop"
+      },
+      {
+        "index": 12,
+        "address": "0x00401042",
+        "bytes": "48 89 df",
+        "mnemonic": "mov",
+        "operands": "rdi, rbx",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401038",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401045",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Set RDI = FD 3 (the input device) — reading from the raw keyboard hardware event stream"
+      },
+      {
+        "index": 13,
+        "address": "0x00401045",
+        "bytes": "48 8d 74 24 f0",
+        "mnemonic": "lea",
+        "operands": "rsi, [rsp-0x10]",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401038",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040104a",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "RSI points to stack buffer for incoming input_event struct (24 bytes)"
+      },
+      {
+        "index": 14,
+        "address": "0x0040104a",
+        "bytes": "48 c7 c2 18 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rdx, 0x18",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401038",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401051",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "RDX = 24 (0x18 bytes) — size of a Linux input_event struct (timeval + type + code + value)"
+      },
+      {
+        "index": 15,
+        "address": "0x00401051",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "read",
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401053",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_read(FD=3, buf=stack, 24) — BLOCKS until a key is pressed; returns one raw input_event struct"
+      },
+      {
+        "index": 16,
+        "address": "0x00401053",
+        "bytes": "48 c7 c0 01 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x1",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x000000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105a",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load sys_write syscall number — about to write captured keystroke data to the log file"
+      },
+      {
+        "index": 17,
+        "address": "0x0040105a",
+        "bytes": "4c 89 e7",
+        "mnemonic": "mov",
+        "operands": "rdi, r12",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105d",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Set RDI = FD 4 (the hidden log file) — writing captured event data to /tmp/.klog"
+      },
+      {
+        "index": 18,
+        "address": "0x0040105d",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "write",
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105f",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_write(FD=4, buf=event_data, 24) — writes raw input_event struct to the hidden log file"
+      },
+      {
+        "index": 19,
+        "address": "0x0040105f",
+        "bytes": "eb da",
+        "mnemonic": "jmp",
+        "operands": "0x40103b",
+        "category": "control_flow",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040103b",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Unconditional jump back to loop start — infinite loop; program never exits; continuously captures keystrokes"
+      },
+      {
+        "index": 20,
+        "address": "0x0040103b",
+        "bytes": "48 c7 c0 00 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x0",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401042",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Loop iteration 2: reload sys_read — blocking again waiting for next keypress"
+      },
+      {
+        "index": 21,
+        "address": "0x00401042",
+        "bytes": "48 89 df",
+        "mnemonic": "mov",
+        "operands": "rdi, rbx",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401045",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Restore input FD from RBX into RDI for next sys_read call"
+      },
+      {
+        "index": 22,
+        "address": "0x00401045",
+        "bytes": "48 8d 74 24 f0",
+        "mnemonic": "lea",
+        "operands": "rsi, [rsp-0x10]",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040104a",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Reset buffer pointer to same stack location — reuses same 24-byte region for each event"
+      },
+      {
+        "index": 23,
+        "address": "0x0040104a",
+        "bytes": "48 c7 c2 18 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rdx, 0x18",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401051",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Set byte count = 24 again for next sys_read"
+      },
+      {
+        "index": 24,
+        "address": "0x00401051",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "read",
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401053",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_read: blocks until second keypress; this is the hallmark of an event-driven polling loop"
+      },
+      {
+        "index": 25,
+        "address": "0x00401053",
+        "bytes": "48 c7 c0 01 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x1",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105a",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load sys_write again — immediately forwarding captured event to log file"
+      },
+      {
+        "index": 26,
+        "address": "0x0040105a",
+        "bytes": "4c 89 e7",
+        "mnemonic": "mov",
+        "operands": "rdi, r12",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105d",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Restore log FD (4) from R12 into RDI"
+      },
+      {
+        "index": 27,
+        "address": "0x0040105d",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "write",
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105f",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_write to log file again — second keypress captured and appended to /tmp/.klog"
+      },
+      {
+        "index": 28,
+        "address": "0x0040105f",
+        "bytes": "eb da",
+        "mnemonic": "jmp",
+        "operands": "0x40103b",
+        "category": "control_flow",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040103b",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Jump back to loop top — infinite read→write cycle continues indefinitely"
+      },
+      {
+        "index": 29,
+        "address": "0x0040103b",
+        "bytes": "48 c7 c0 00 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x0",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401042",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Loop iteration 3: pattern repeating — emulation stopped here to prevent infinite loop timeout"
+      },
+      {
+        "index": 30,
+        "address": "0x00401042",
+        "bytes": "48 89 df",
+        "mnemonic": "mov",
+        "operands": "rdi, rbx",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401045",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Confirmed: RDI always set to FD 3 here — the input device, not stdout"
+      },
+      {
+        "index": 31,
+        "address": "0x00401045",
+        "bytes": "48 8d 74 24 f0",
+        "mnemonic": "lea",
+        "operands": "rsi, [rsp-0x10]",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040104a",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Stack buffer reused — no heap allocation; entire program runs within initial stack frame"
+      },
+      {
+        "index": 32,
+        "address": "0x0040104a",
+        "bytes": "48 c7 c2 18 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rdx, 0x18",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401051",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "RDX = 24 bytes — input_event structure size, consistent across all iterations"
+      },
+      {
+        "index": 33,
+        "address": "0x00401051",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "read",
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401053",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Third sys_read from input device — loop pattern fully confirmed; instruction limit reached"
+      },
+      {
+        "index": 34,
+        "address": "0x00401053",
+        "bytes": "48 c7 c0 01 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x1",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105a",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_write preparation — confirm read-write pair repeats; emulation truncated after 3 iterations"
+      },
+      {
+        "index": 35,
+        "address": "0x0040105a",
+        "bytes": "4c 89 e7",
+        "mnemonic": "mov",
+        "operands": "rdi, r12",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x00401053",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105d",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "R12 → RDI: log file FD consistently loaded for each write"
+      },
+      {
+        "index": 36,
+        "address": "0x0040105d",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "write",
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040105f",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Third write to /tmp/.klog — exfiltration pattern confirmed; emulation halted"
+      },
+      {
+        "index": 37,
+        "address": "0x0040105f",
+        "bytes": "eb da",
+        "mnemonic": "jmp",
+        "operands": "0x40103b",
+        "category": "control_flow",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000018",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000004",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040103b",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Final observed jump — loop would continue indefinitely without the instruction limit"
+      },
+      {
+        "index": 38,
+        "address": "0x0040103b",
+        "bytes": "48 c7 c0 00 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x0",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401042",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Loop iteration 4 start — emulator instruction limit triggered; trace ends here"
+      },
+      {
+        "index": 39,
+        "address": "0x00401042",
+        "bytes": "48 89 df",
+        "mnemonic": "mov",
+        "operands": "rdi, rbx",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401045",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Emulation halted — 40 instructions captured across 4 loop iterations"
+      },
+      {
+        "index": 40,
+        "address": "0x00401045",
+        "bytes": "48 8d 74 24 f0",
+        "mnemonic": "lea",
+        "operands": "rsi, [rsp-0x10]",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040104a",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "LEA to stack buffer — same address every iteration confirms stack-based ring buffer pattern"
+      },
+      {
+        "index": 41,
+        "address": "0x0040104a",
+        "bytes": "48 c7 c2 18 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rdx, 0x18",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000003",
+          "rcx": "0x0040105f",
+          "rdx": "0x0000000000000018",
+          "rsi": "0x7ffcffff0ff0",
+          "rdi": "0x0000000000000003",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401051",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Trace end: RDX still 24, consistent — program would call sys_read again; analysis complete"
+      }
+    ],
+    "syscalls": [
+      {
+        "index": 3,
+        "name": "open",
+        "number": 2,
+        "args": ["0x402000", "0x0", "0x0"],
+        "returnValue": "0x3",
+        "category": "privilege"
+      },
+      {
+        "index": 9,
+        "name": "open",
+        "number": 2,
+        "args": ["0x402012", "0x241", "0x1a4"],
+        "returnValue": "0x4",
+        "category": "filesystem"
+      },
+      {
+        "index": 15,
+        "name": "read",
+        "number": 0,
+        "args": ["0x3", "0x7ffcffff0ff0", "0x18"],
+        "returnValue": "0x18",
+        "category": "process"
+      },
+      {
+        "index": 18,
+        "name": "write",
+        "number": 1,
+        "args": ["0x4", "0x7ffcffff0ff0", "0x18"],
+        "returnValue": "0x18",
+        "category": "filesystem"
+      },
+      {
+        "index": 24,
+        "name": "read",
+        "number": 0,
+        "args": ["0x3", "0x7ffcffff0ff0", "0x18"],
+        "returnValue": "0x18",
+        "category": "process"
+      },
+      {
+        "index": 27,
+        "name": "write",
+        "number": 1,
+        "args": ["0x4", "0x7ffcffff0ff0", "0x18"],
+        "returnValue": "0x18",
+        "category": "filesystem"
+      },
+      {
+        "index": 33,
+        "name": "read",
+        "number": 0,
+        "args": ["0x3", "0x7ffcffff0ff0", "0x18"],
+        "returnValue": "0x18",
+        "category": "process"
+      },
+      {
+        "index": 36,
+        "name": "write",
+        "number": 1,
+        "args": ["0x4", "0x7ffcffff0ff0", "0x18"],
+        "returnValue": "0x18",
+        "category": "filesystem"
+      }
+    ]
+  },
+  "report": {
+    "verdict": "SUSPICIOUS",
+    "confidence": 82,
+    "narrative": "This program exhibits a classic **keylogger behavioral pattern**: it opens the raw keyboard input device `/dev/input/event0`, creates a hidden dot-file `/tmp/.klog`, then enters an **infinite loop** alternating between `sys_read` (blocking until a key is pressed) and `sys_write` (appending the raw event struct to the log file).\n\nThe program never exits — there is no `sys_exit` call. The use of a hidden filename (leading dot, `.klog`) and the `/tmp/` directory are evasion techniques commonly used by basic keyloggers to avoid casual detection.\n\nThis could be a legitimate input monitoring utility (accessibility software, macro recorder) or a malicious keylogger. The raw `/dev/input/event0` access is the primary suspicion indicator — standard applications use the X11 or Wayland input APIs, not raw device files. Only root or users in the `input` group can open this device.",
+    "behaviors": [
+      {
+        "category": "privilege",
+        "name": "Raw Input Device Access",
+        "description": "Opens /dev/input/event0 directly, bypassing the graphics stack. Requires elevated privileges (root or input group membership).",
+        "risk_score": 72,
+        "mitre_id": "T1056.001",
+        "mitre_name": "Input Capture: Keylogging",
+        "syscalls": ["open"]
+      },
+      {
+        "category": "filesystem",
+        "name": "Hidden Log File Creation",
+        "description": "Creates /tmp/.klog with O_CREAT|O_APPEND flags. Leading dot hides the file from `ls` without -a flag.",
+        "risk_score": 65,
+        "mitre_id": "T1074.001",
+        "mitre_name": "Data Staged: Local Data Staging",
+        "syscalls": ["open", "write"]
+      },
+      {
+        "category": "process",
+        "name": "Infinite Blocking Loop",
+        "description": "Program runs indefinitely with no exit path. Alternates between blocking sys_read and sys_write, consuming no CPU while idle (blocking I/O).",
+        "risk_score": 40,
+        "mitre_id": "T1056.001",
+        "mitre_name": "Input Capture: Keylogging",
+        "syscalls": ["read", "write"]
+      }
+    ],
+    "concepts": [
+      {
+        "term": "Blocking I/O",
+        "definition": "A sys_read call that suspends the process until data is available. When reading from /dev/input/event0, the process sleeps at the kernel level consuming zero CPU until a key is pressed. The OS wakes the process only when an input_event is ready.",
+        "course_topic": "Module 5: I/O and Device Interaction"
+      },
+      {
+        "term": "Linux input_event Struct",
+        "definition": "A 24-byte kernel data structure returned for each input event: `struct timeval` (16 bytes for timestamp), `__u16 type` (2 bytes), `__u16 code` (2 bytes for key code), `__s32 value` (4 bytes). Reading 24 bytes per syscall captures exactly one event.",
+        "course_topic": "Module 5: I/O and Device Interaction"
+      },
+      {
+        "term": "Infinite Loop in Assembly",
+        "definition": "The `jmp` instruction with a negative offset creates an unconditional backward branch. Without a conditional exit (e.g., `jz`, `jnz`), the loop runs forever. The OS will not terminate the process unless it receives a signal (SIGKILL) or the parent process exits.",
+        "course_topic": "Module 2: x86-64 Instruction Set"
+      },
+      {
+        "term": "O_CREAT | O_APPEND Flags",
+        "definition": "Open flags passed in RSI to sys_open. O_CREAT (0x40) creates the file if it does not exist. O_APPEND (0x400) ensures each write is appended at the end, preventing overwriting of previously captured keystrokes. Combined value 0x241 = O_WRONLY|O_CREAT|O_APPEND.",
+        "course_topic": "Module 3: OS Interfaces & System Calls"
+      }
+    ]
+  }
+}

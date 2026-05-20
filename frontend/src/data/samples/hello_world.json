@@ -1,0 +1,259 @@
+{
+  "id": "hello_world",
+  "displayName": "Hello World",
+  "description": "Minimal Linux x86-64 program that writes 'Hello, World!' to stdout then exits cleanly.",
+  "architecture": "x86_64",
+  "riskLevel": "SAFE",
+  "tags": ["beginner", "syscall", "write", "exit"],
+  "trace": {
+    "programName": "hello_world",
+    "architecture": "x86_64",
+    "totalInstructions": 12,
+    "steps": [
+      {
+        "index": 0,
+        "address": "0x00401000",
+        "bytes": "48 c7 c0 01 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x1",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401007",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load syscall number 1 (sys_write) into RAX — the syscall number always goes in RAX"
+      },
+      {
+        "index": 1,
+        "address": "0x00401007",
+        "bytes": "48 c7 c7 01 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rdi, 0x1",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040100e",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Set RDI = 1 (file descriptor for stdout) — first argument to sys_write per Linux x86-64 ABI"
+      },
+      {
+        "index": 2,
+        "address": "0x0040100e",
+        "bytes": "48 8d 35 eb 0f 00 00",
+        "mnemonic": "lea",
+        "operands": "rsi, [rip+0xfeb]",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000402000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401015",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load effective address of string 'Hello, World!\\n' into RSI — second argument to sys_write (buffer pointer)"
+      },
+      {
+        "index": 3,
+        "address": "0x00401015",
+        "bytes": "48 c7 c2 0e 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rdx, 0xe",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000001",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x000000000000000e",
+          "rsi": "0x0000000000402000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040101c",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Set RDX = 14 (0xe) — byte count of 'Hello, World!\\n', third argument to sys_write"
+      },
+      {
+        "index": 4,
+        "address": "0x0040101c",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "write",
+        "registers": {
+          "rax": "0x000000000000000e",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0040101e",
+          "rdx": "0x000000000000000e",
+          "rsi": "0x0000000000402000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040101e",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_write(fd=1, buf=0x402000, count=14) — transfers control to the OS kernel; RAX returns bytes written (14)"
+      },
+      {
+        "index": 5,
+        "address": "0x0040101e",
+        "bytes": "48 c7 c0 3c 00 00 00",
+        "mnemonic": "mov",
+        "operands": "rax, 0x3c",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0040101e",
+          "rdx": "0x000000000000000e",
+          "rsi": "0x0000000000402000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401025",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Load syscall number 60 (0x3c) — sys_exit, which terminates the process"
+      },
+      {
+        "index": 6,
+        "address": "0x00401025",
+        "bytes": "48 31 ff",
+        "mnemonic": "xor",
+        "operands": "rdi, rdi",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0040101e",
+          "rdx": "0x000000000000000e",
+          "rsi": "0x0000000000402000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401028",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "XOR RDI with itself to set RDI = 0 (exit code 0 = success) — common 3-byte idiom shorter than MOV RDI, 0"
+      },
+      {
+        "index": 7,
+        "address": "0x00401028",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "exit",
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0040140028",
+          "rdx": "0x000000000000000e",
+          "rsi": "0x0000000000402000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040102a",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "sys_exit(0) — process terminates here; the kernel reclaims all resources; no return to user space"
+      }
+    ],
+    "syscalls": [
+      {
+        "index": 4,
+        "name": "write",
+        "number": 1,
+        "args": ["0x1", "0x402000", "0xe"],
+        "returnValue": "0xe",
+        "category": "filesystem"
+      },
+      {
+        "index": 7,
+        "name": "exit",
+        "number": 60,
+        "args": ["0x0"],
+        "returnValue": "0x0",
+        "category": "process"
+      }
+    ],
+    "totalInstructions": 8
+  },
+  "report": {
+    "verdict": "SAFE",
+    "confidence": 98,
+    "narrative": "This program performs exactly two syscalls: **sys_write** to file descriptor 1 (stdout) and **sys_exit** with code 0. The write call transfers 14 bytes from a read-only data section to stdout — the string `Hello, World!\\n`. No file access, no network activity, no dynamic memory allocation, and no privilege changes are observed.\n\nThe register setup follows the standard Linux x86-64 syscall calling convention precisely: RAX holds the syscall number, RDI/RSI/RDX carry arguments 1/2/3. The `xor rdi, rdi` instruction before `sys_exit` is a common size-optimization idiom (3 bytes vs 7 for `mov rdi, 0`).\n\nThis is the canonical minimal x86-64 ELF program. It is completely safe and serves as the reference baseline for all behavioral comparisons.",
+    "behaviors": [
+      {
+        "category": "filesystem",
+        "name": "Standard Output Write",
+        "description": "Writes 14 bytes to file descriptor 1 (stdout). The buffer pointer resolves to a read-only string in the .data section.",
+        "risk_score": 2,
+        "mitre_id": "",
+        "mitre_name": "",
+        "syscalls": ["write"]
+      },
+      {
+        "category": "process",
+        "name": "Clean Process Termination",
+        "description": "Calls sys_exit with code 0, indicating successful completion. Normal process lifecycle.",
+        "risk_score": 0,
+        "mitre_id": "",
+        "mitre_name": "",
+        "syscalls": ["exit"]
+      }
+    ],
+    "concepts": [
+      {
+        "term": "System Call",
+        "definition": "A request from a user-space program to the OS kernel to perform a privileged operation. In x86-64 Linux, triggered by the `syscall` instruction with the call number in RAX. The kernel validates the request, performs it, and stores the return value back in RAX.",
+        "course_topic": "Module 3: OS Interfaces & System Calls"
+      },
+      {
+        "term": "Linux x86-64 Calling Convention",
+        "definition": "The ABI rule for passing arguments to syscalls: RAX=syscall number, RDI=arg1, RSI=arg2, RDX=arg3, R10=arg4, R8=arg5, R9=arg6. This is defined by the System V AMD64 ABI and must be followed exactly for the kernel to interpret arguments correctly.",
+        "course_topic": "Module 4: Calling Conventions & ABI"
+      },
+      {
+        "term": "File Descriptor",
+        "definition": "An integer handle representing an open I/O resource. FD 0=stdin, FD 1=stdout, FD 2=stderr. Every process inherits these three from the OS at startup. Passing FD 1 to sys_write sends output to the terminal.",
+        "course_topic": "Module 3: OS Interfaces & System Calls"
+      },
+      {
+        "term": "XOR Zeroing Idiom",
+        "definition": "XORing a register with itself (e.g., `xor rdi, rdi`) sets it to zero in 3 bytes vs 7 bytes for `mov rdi, 0`. This technique exploits the fact that X XOR X = 0 for any value X, and is a standard compiler optimization visible in virtually all x86-64 assembly output.",
+        "course_topic": "Module 2: x86-64 Instruction Set"
+      }
+    ]
+  }
+}

