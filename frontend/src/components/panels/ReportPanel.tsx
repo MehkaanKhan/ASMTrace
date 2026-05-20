@@ -57,7 +57,7 @@ export default function ReportPanel() {
   }
 
   return (
-    <div id="print-report" className="flex flex-col gap-7 p-8" style={{ maxWidth: 800 }}>
+    <div id="print-report" className="flex flex-col gap-7 p-8 mx-auto w-full" style={{ maxWidth: 800 }}>
       {/* Header */}
       <div className="no-print flex items-center justify-between">
         <p className="eyebrow">Analysis report</p>

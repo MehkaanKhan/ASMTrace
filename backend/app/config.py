@@ -1,7 +1,6 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# config.py lives at backend/app/config.py — .env is two levels up at project root
 _ENV_FILE = Path(__file__).parent.parent.parent / ".env"
 
 
@@ -14,6 +13,9 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./asmtrace.db"
     secret_key: str = "changeme"
     access_token_expire_minutes: int = 480
+    # Comma-separated extra origins, set in Render dashboard
+    # e.g. "https://mehkaankhan.github.io"
+    allowed_origins: str = ""
 
 
 settings = Settings()

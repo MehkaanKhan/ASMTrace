@@ -34,7 +34,7 @@ export default function UploadPanel() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-8 overflow-auto p-8" style={{ maxWidth: 860 }}>
+    <div className="flex h-full flex-col gap-8 overflow-auto p-8">
       {/* Heading */}
       <div>
         <p className="eyebrow mb-2">Assembly analysis</p>
