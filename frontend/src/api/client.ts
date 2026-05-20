@@ -1,7 +1,9 @@
 import axios from 'axios'
 
+// In production (GitHub Pages) VITE_API_BASE_URL points to the Render backend.
+// In dev the Vite proxy handles /api → localhost:8000.
 export const client = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? '/api',
   timeout: 120_000,
 })
 
