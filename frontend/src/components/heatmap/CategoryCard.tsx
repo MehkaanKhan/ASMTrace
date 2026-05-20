@@ -1,40 +1,31 @@
 import type { BehaviorEntry } from '../../types/report'
 
-interface CategoryCardProps {
-  behavior: BehaviorEntry
+function riskChipClass(score: number) {
+  if (score >= 67) return 'chip chip-dangerous'
+  if (score >= 34) return 'chip chip-suspicious'
+  return 'chip chip-safe'
+}
+function barColor(score: number) {
+  if (score >= 67) return 'var(--oxblood-500)'
+  if (score >= 34) return 'var(--amber-500)'
+  return 'var(--sage-500)'
 }
 
-function riskColor(score: number) {
-  if (score <= 33) return 'border-green-700 bg-green-900/30 text-green-300'
-  if (score <= 66) return 'border-amber-700 bg-amber-900/30 text-amber-300'
-  return 'border-red-700 bg-red-900/30 text-red-300'
-}
-
-function riskBarColor(score: number) {
-  if (score <= 33) return 'bg-green-500'
-  if (score <= 66) return 'bg-amber-500'
-  return 'bg-red-500'
-}
-
-export default function CategoryCard({ behavior }: CategoryCardProps) {
-  const color = riskColor(behavior.risk_score)
-  const barColor = riskBarColor(behavior.risk_score)
-
+export default function CategoryCard({ behavior }: { behavior: BehaviorEntry }) {
   return (
-    <div className={`rounded-lg border p-3 ${color}`}>
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs font-bold uppercase">{behavior.category}</span>
-        <span className="font-mono text-sm font-bold">{behavior.risk_score}</span>
+    <div className="panel p-3 flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--fg-3)' }}>
+          {behavior.category}
+        </span>
+        <span className={riskChipClass(behavior.risk_score)}>{behavior.risk_score}</span>
       </div>
-      <p className="mt-1 text-xs font-semibold">{behavior.name}</p>
-      <div className="mt-2 h-1.5 w-full rounded bg-zinc-800">
-        <div
-          className={`h-full rounded ${barColor}`}
-          style={{ width: `${behavior.risk_score}%` }}
-        />
+      <p style={{ fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--fg-2)', lineHeight: 1.4 }}>{behavior.name}</p>
+      <div style={{ height: 3, background: 'var(--bg-sunken)', borderRadius: 2 }}>
+        <div style={{ height: '100%', width: `${behavior.risk_score}%`, background: barColor(behavior.risk_score), borderRadius: 2 }} />
       </div>
       {behavior.mitre_id && (
-        <p className="mt-1 font-mono text-xs opacity-70">{behavior.mitre_id}</p>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--fg-muted)' }}>{behavior.mitre_id}</span>
       )}
     </div>
   )

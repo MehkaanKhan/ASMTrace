@@ -1,30 +1,17 @@
 export default function ConfidenceRing({ confidence }: { confidence: number }) {
-  const radius = 28
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (confidence / 100) * circumference
+  const r = 26
+  const circ = 2 * Math.PI * r
+  const offset = circ - (confidence / 100) * circ
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      <svg width="72" height="72" className="-rotate-90">
-        <circle cx="36" cy="36" r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
-        <circle
-          cx="36" cy="36" r={radius}
-          fill="none"
-          stroke="url(#ring-gradient)"
-          strokeWidth="5"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-        />
-        <defs>
-          <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#6366f1" />
-            <stop offset="100%" stopColor="#a78bfa" />
-          </linearGradient>
-        </defs>
+    <div className="flex flex-col items-center gap-1">
+      <svg width="66" height="66" style={{ transform: 'rotate(-90deg)' }}>
+        <circle cx="33" cy="33" r={r} fill="none" stroke="var(--hairline)" strokeWidth="4" />
+        <circle cx="33" cy="33" r={r} fill="none" stroke="var(--ochre-500)" strokeWidth="4"
+          strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" />
       </svg>
-      <span className="font-mono text-sm font-bold text-zinc-200">{confidence}%</span>
-      <span className="text-[10px] uppercase tracking-widest text-zinc-600">confidence</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 600, color: 'var(--fg)' }}>{confidence}%</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--fg-muted)', letterSpacing: '.12em', textTransform: 'uppercase' }}>confidence</span>
     </div>
   )
 }

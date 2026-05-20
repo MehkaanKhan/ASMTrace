@@ -1,34 +1,27 @@
 import type { BehaviorEntry } from '../../types/report'
 
-function barGradient(score: number) {
-  if (score >= 67) return 'linear-gradient(90deg, #dc2626, #ef4444)'
-  if (score >= 34) return 'linear-gradient(90deg, #b45309, #f59e0b)'
-  return 'linear-gradient(90deg, #15803d, #22c55e)'
+function barColor(score: number) {
+  if (score >= 67) return 'var(--oxblood-500)'
+  if (score >= 34) return 'var(--amber-500)'
+  return 'var(--sage-500)'
 }
-
 function scoreColor(score: number) {
-  if (score >= 67) return '#f87171'
-  if (score >= 34) return '#fbbf24'
-  return '#4ade80'
+  if (score >= 67) return 'var(--oxblood-300)'
+  if (score >= 34) return 'var(--amber-300)'
+  return 'var(--sage-300)'
 }
 
 export default function RiskScoreBar({ behavior }: { behavior: BehaviorEntry }) {
   return (
-    <div
-      className="flex flex-col gap-2 rounded-lg p-3"
-      style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)' }}
-    >
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-xs text-zinc-300">{behavior.name}</span>
-        <span className="font-mono text-xs font-bold" style={{ color: scoreColor(behavior.risk_score) }}>
-          {behavior.risk_score}/100
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--fg-2)' }}>{behavior.name}</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600, color: scoreColor(behavior.risk_score) }}>
+          {behavior.risk_score}
         </span>
       </div>
-      <div className="h-1.5 w-full rounded-full" style={{ background: 'rgba(255,255,255,0.06)' }}>
-        <div
-          className="h-full rounded-full transition-all"
-          style={{ width: `${behavior.risk_score}%`, background: barGradient(behavior.risk_score) }}
-        />
+      <div style={{ height: 3, background: 'var(--bg-sunken)', borderRadius: 2 }}>
+        <div style={{ height: '100%', width: `${behavior.risk_score}%`, background: barColor(behavior.risk_score), borderRadius: 2, transition: 'width .3s' }} />
       </div>
     </div>
   )

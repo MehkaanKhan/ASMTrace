@@ -4,17 +4,24 @@ export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        mono:  ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        serif: ['Source Serif 4', 'Georgia', 'serif'],
+        sans:  ['Inter', 'system-ui', 'sans-serif'],
+      },
       colors: {
         verdict: {
-          safe: '#22c55e',
-          suspicious: '#f59e0b',
-          dangerous: '#ef4444',
+          safe:       '#5a7855',
+          suspicious: '#c08e34',
+          dangerous:  '#8b2c2c',
         },
         asm: {
-          register: '#60a5fa',
-          mnemonic: '#f472b6',
-          immediate: '#4ade80',
-          address: '#a78bfa',
+          register:  '#7da3d4',
+          mnemonic:  '#d97aa0',
+          immediate: '#88b09a',
+          address:   '#a98ed4',
+          comment:   '#586675',
+          label:     '#88a496',
         },
       },
     },

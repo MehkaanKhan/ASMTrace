@@ -1,50 +1,51 @@
-import type { InstructionStep, InstructionCategory } from '../../types/trace'
-import SyscallBadge from './SyscallBadge'
+import type { InstructionStep } from '../../types/trace'
 
-interface InstructionRowProps {
-  step: InstructionStep
-  isActive: boolean
-  onClick: () => void
+interface Props { step: InstructionStep; isActive: boolean; onClick: () => void }
+
+const MNEMONIC_COLOR: Record<string, string> = {
+  data_move:    'var(--asm-register)',
+  arithmetic:   'var(--asm-immediate)',
+  control_flow: 'var(--asm-directive)',
+  syscall:      'var(--asm-mnemonic)',
+  memory:       'var(--asm-address)',
+  crypto:       'var(--asm-label)',
 }
 
-const CATEGORY_COLOR: Record<InstructionCategory, string> = {
-  data_move:    'text-blue-400',
-  arithmetic:   'text-purple-400',
-  control_flow: 'text-yellow-400',
-  syscall:      'text-red-400',
-  memory:       'text-orange-400',
-  crypto:       'text-pink-400',
-}
-
-export default function InstructionRow({ step, isActive, onClick }: InstructionRowProps) {
-  const mnemonicColor = CATEGORY_COLOR[step.category]
+export default function InstructionRow({ step, isActive, onClick }: Props) {
+  const mnemonicColor = MNEMONIC_COLOR[step.category] ?? 'var(--fg-2)'
 
   return (
     <div
       onClick={onClick}
-      className={`flex cursor-pointer items-start gap-3 border-l-2 px-3 py-1.5 font-mono text-xs transition-colors ${
-        isActive
-          ? 'border-emerald-400 bg-zinc-700/80 text-zinc-100'
-          : 'border-transparent hover:border-zinc-600 hover:bg-zinc-800/60 text-zinc-400'
-      }`}
+      className={`code-ln ${isActive ? 'current' : ''}`}
+      style={{ cursor: 'pointer', borderLeft: isActive ? '2px solid var(--ochre-500)' : '2px solid transparent' }}
     >
-      {/* Index */}
-      <span className="w-8 shrink-0 text-right text-zinc-600">{step.index}</span>
-
-      {/* Address */}
-      <span className="w-24 shrink-0 text-asm-address">{step.address}</span>
-
-      {/* Bytes */}
-      <span className="w-28 shrink-0 text-zinc-600">{step.bytes}</span>
-
-      {/* Mnemonic + operands */}
-      <span className="flex-1">
-        <span className={`font-bold ${mnemonicColor}`}>{step.mnemonic}</span>
+      <span className="code-gutter" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 10 }}>
+        {isActive ? <span className="code-caret">▸</span> : step.index}
+      </span>
+      <span className="code-src" style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+        <span style={{ color: 'var(--asm-address)', width: 90, flexShrink: 0, fontSize: 11 }}>{step.address}</span>
+        <span style={{ color: mnemonicColor, fontWeight: 600, minWidth: 52 }}>{step.mnemonic}</span>
         {step.operands && (
-          <span className="ml-2 text-zinc-300">{step.operands}</span>
+          <span style={{ color: 'var(--fg-2)', marginLeft: 4 }}>{step.operands}</span>
         )}
         {step.isSyscall && step.syscallName && (
-          <SyscallBadge name={step.syscallName} />
+          <span style={{
+            marginLeft: 12,
+            fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 600,
+            color: 'var(--oxblood-300)',
+            background: 'rgba(115,32,32,.25)',
+            border: '1px solid var(--oxblood-700)',
+            borderRadius: 'var(--r-pill)',
+            padding: '1px 7px',
+          }}>
+            {step.syscallName}
+          </span>
+        )}
+        {step.annotation && (
+          <span style={{ color: 'var(--asm-comment)', marginLeft: 16, fontStyle: 'italic', fontSize: 11 }}>
+            ; {step.annotation}
+          </span>
         )}
       </span>
     </div>

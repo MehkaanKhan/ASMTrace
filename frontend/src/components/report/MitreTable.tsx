@@ -1,63 +1,50 @@
 import type { BehaviorEntry } from '../../types/report'
 
+function scoreColor(s: number) {
+  if (s >= 67) return 'var(--oxblood-300)'
+  if (s >= 34) return 'var(--amber-300)'
+  return 'var(--sage-300)'
+}
+
 export default function MitreTable({ behaviors }: { behaviors: BehaviorEntry[] }) {
-  const withMitre = behaviors.filter((b) => b.mitre_id)
-  if (withMitre.length === 0) return null
+  const rows = behaviors.filter(b => b.mitre_id)
+  if (!rows.length) return null
+
+  const cellStyle = { padding: '7px 14px', borderBottom: '1px solid var(--hairline)' }
 
   return (
-    <div className="overflow-hidden rounded-xl" style={{ border: '1px solid var(--border-subtle)' }}>
-      <div
-        className="px-4 py-3"
-        style={{ background: 'var(--bg-elevated)', borderBottom: '1px solid var(--border-subtle)' }}
-      >
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
-          MITRE ATT&CK Mapping
-        </p>
+    <div style={{ border: '1px solid var(--hairline)', borderRadius: 'var(--r-md)', overflow: 'hidden' }}>
+      <div className="panel-head">
+        <span className="panel-title">MITRE ATT&amp;CK mapping</span>
       </div>
-      <table className="w-full font-mono text-xs" style={{ background: 'var(--bg-base)' }}>
+      <table style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: 12, borderCollapse: 'collapse' }}>
         <thead>
-          <tr className="text-left" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-            <th className="px-4 py-2.5 text-zinc-600 font-medium">Category</th>
-            <th className="px-4 py-2.5 text-zinc-600 font-medium">Behavior</th>
-            <th className="px-4 py-2.5 text-zinc-600 font-medium">Technique</th>
-            <th className="px-4 py-2.5 text-right text-zinc-600 font-medium">Risk</th>
+          <tr style={{ background: 'rgba(255,255,255,.02)' }}>
+            {['Category','Behavior','Technique','Risk'].map(h => (
+              <th key={h} style={{ ...cellStyle, textAlign: h === 'Risk' ? 'right' : 'left', color: 'var(--fg-muted)', fontWeight: 600, fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase' }}>{h}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {withMitre.map((b, i) => (
-            <tr
-              key={i}
-              className="transition-colors"
-              style={{ borderBottom: '1px solid var(--border-subtle)' }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.02)'
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = 'transparent'
-              }}
+          {rows.map((b, i) => (
+            <tr key={i}
+              style={{ transition: 'background .1s' }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,.02)'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
             >
-              <td className="px-4 py-2.5 text-zinc-500">{b.category}</td>
-              <td className="px-4 py-2.5 text-zinc-300">{b.name}</td>
-              <td className="px-4 py-2.5">
-                <a
-                  href={`https://attack.mitre.org/techniques/${b.mitre_id.replace('.', '/')}/`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-indigo-400 hover:text-indigo-300 hover:underline"
+              <td style={{ ...cellStyle, color: 'var(--fg-3)' }}>{b.category}</td>
+              <td style={{ ...cellStyle, color: 'var(--fg-2)' }}>{b.name}</td>
+              <td style={cellStyle}>
+                <a href={`https://attack.mitre.org/techniques/${b.mitre_id.replace('.','/')}/`}
+                  target="_blank" rel="noreferrer"
+                  style={{ color: 'var(--ochre-500)', textDecoration: 'none' }}
+                  onMouseEnter={e => (e.target as HTMLElement).style.textDecoration = 'underline'}
+                  onMouseLeave={e => (e.target as HTMLElement).style.textDecoration = 'none'}
                 >
                   {b.mitre_id} — {b.mitre_name}
                 </a>
               </td>
-              <td className="px-4 py-2.5 text-right">
-                <span
-                  className="font-bold"
-                  style={{
-                    color: b.risk_score >= 67 ? '#f87171' : b.risk_score >= 34 ? '#fbbf24' : '#4ade80',
-                  }}
-                >
-                  {b.risk_score}
-                </span>
-              </td>
+              <td style={{ ...cellStyle, textAlign: 'right', fontWeight: 600, color: scoreColor(b.risk_score) }}>{b.risk_score}</td>
             </tr>
           ))}
         </tbody>

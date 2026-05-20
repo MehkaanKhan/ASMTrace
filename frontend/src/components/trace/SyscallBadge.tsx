@@ -1,11 +1,15 @@
-interface SyscallBadgeProps {
-  name: string
-}
-
-export default function SyscallBadge({ name }: SyscallBadgeProps) {
+export default function SyscallBadge({ name }: { name: string }) {
   return (
-    <span className="ml-2 inline-flex items-center rounded border border-red-700 bg-red-900/40 px-1.5 py-0.5 font-mono text-xs text-red-300">
-      syscall: {name}
+    <span style={{
+      fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 600,
+      color: 'var(--oxblood-300)',
+      background: 'rgba(115,32,32,.25)',
+      border: '1px solid var(--oxblood-700)',
+      borderRadius: 'var(--r-pill)',
+      padding: '1px 7px',
+      marginLeft: 10,
+    }}>
+      {name}
     </span>
   )
 }

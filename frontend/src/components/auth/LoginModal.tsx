@@ -2,11 +2,7 @@ import { useState } from 'react'
 import { loginUser, registerUser } from '../../api/auth'
 import { useAuthStore } from '../../store'
 
-interface Props {
-  onClose: () => void
-}
-
-export default function LoginModal({ onClose }: Props) {
+export default function LoginModal({ onClose }: { onClose: () => void }) {
   const { setAuth } = useAuthStore()
   const [mode, setMode] = useState<'login' | 'register'>('login')
   const [email, setEmail] = useState('')
@@ -17,120 +13,60 @@ export default function LoginModal({ onClose }: Props) {
   const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+    e.preventDefault(); setLoading(true); setError(null)
     try {
-      const res =
-        mode === 'login'
-          ? await loginUser(email, password)
-          : await registerUser(email, password, displayName, isProfessor)
-      setAuth(res.user, res.access_token)
-      onClose()
+      const res = mode === 'login'
+        ? await loginUser(email, password)
+        : await registerUser(email, password, displayName, isProfessor)
+      setAuth(res.user, res.access_token); onClose()
     } catch (err: unknown) {
-      const msg =
+      setError(
         (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ??
         'Could not reach the server. The backend is not deployed in this demo.'
-      setError(msg)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const inputStyle = {
-    background: 'var(--bg-base)',
-    border: '1px solid var(--border-subtle)',
+      )
+    } finally { setLoading(false) }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div
-        className="w-full max-w-sm rounded-xl p-6 shadow-2xl"
-        style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}
-      >
-        {/* Header */}
-        <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-zinc-200">Account</h2>
-          <button onClick={onClose} className="text-zinc-600 hover:text-zinc-400 text-lg leading-none">×</button>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.7)' }}>
+      <div style={{ width: 360, background: 'var(--bg-raised)', border: '1px solid var(--hairline)', borderRadius: 'var(--r-lg)', padding: 24, boxShadow: 'var(--shadow-raised)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 600, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--fg-3)' }}>Account</p>
+          <button onClick={onClose} style={{ fontFamily: 'var(--font-mono)', fontSize: 16, color: 'var(--fg-muted)', background: 'none', border: 'none', cursor: 'pointer', lineHeight: 1 }}>×</button>
         </div>
 
         {/* Tabs */}
-        <div
-          className="mb-5 flex gap-1 rounded-lg p-1"
-          style={{ background: 'var(--bg-elevated)' }}
-        >
-          {(['login', 'register'] as const).map((m) => (
-            <button
-              key={m}
-              onClick={() => setMode(m)}
-              className="flex-1 rounded py-1.5 text-xs font-semibold capitalize transition-colors"
-              style={
-                mode === m
-                  ? { background: 'rgba(99,102,241,0.2)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.3)' }
-                  : { color: '#71717a', border: '1px solid transparent' }
-              }
-            >
-              {m}
-            </button>
+        <div style={{ display: 'flex', gap: 4, marginBottom: 16, background: 'var(--bg-sunken)', padding: 3, borderRadius: 'var(--r-sm)', border: '1px solid var(--hairline)' }}>
+          {(['login','register'] as const).map(m => (
+            <button key={m} onClick={() => setMode(m)} style={{
+              flex: 1, fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600,
+              letterSpacing: '.04em', textTransform: 'capitalize',
+              padding: '5px 0', borderRadius: 'var(--r-xs)',
+              border: mode === m ? '1px solid var(--hairline)' : '1px solid transparent',
+              background: mode === m ? 'var(--bg-raised)' : 'transparent',
+              color: mode === m ? 'var(--fg)' : 'var(--fg-muted)',
+              cursor: 'pointer', transition: 'all var(--dur-fast)',
+            }}>{m}</button>
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {mode === 'register' && (
-            <input
-              type="text"
-              placeholder="Display name (optional)"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              style={inputStyle}
-              className="rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
-            />
+            <input className="inp" type="text" placeholder="Display name (optional)" value={displayName} onChange={e => setDisplayName(e.target.value)} />
           )}
-          <input
-            type="email"
-            placeholder="Email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={inputStyle}
-            className="rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={inputStyle}
-            className="rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
-          />
+          <input className="inp" type="email" placeholder="Email" required value={email} onChange={e => setEmail(e.target.value)} />
+          <input className="inp" type="password" placeholder="Password" required value={password} onChange={e => setPassword(e.target.value)} />
           {mode === 'register' && (
-            <label className="flex items-center gap-2 text-xs text-zinc-500">
-              <input
-                type="checkbox"
-                checked={isProfessor}
-                onChange={(e) => setIsProfessor(e.target.checked)}
-                className="accent-indigo-500"
-              />
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--fg-3)', cursor: 'pointer' }}>
+              <input type="checkbox" checked={isProfessor} onChange={e => setIsProfessor(e.target.checked)} style={{ accentColor: 'var(--forest-700)' }} />
               Register as professor
             </label>
           )}
-
           {error && (
-            <p
-              className="rounded-lg px-3 py-2 text-xs text-red-400"
-              style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}
-            >
-              {error}
-            </p>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 13, fontStyle: 'italic', color: 'var(--oxblood-300)' }}>{error}</p>
           )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary mt-1 rounded-lg py-2 text-sm font-semibold text-white disabled:opacity-50"
-          >
-            {loading ? 'Loading…' : mode === 'login' ? 'Sign In' : 'Create Account'}
+          <button type="submit" disabled={loading} className="btn btn-primary" style={{ justifyContent: 'center', marginTop: 4, opacity: loading ? .6 : 1 }}>
+            {loading ? 'Loading…' : mode === 'login' ? 'Sign in' : 'Create account'}
           </button>
         </form>
       </div>

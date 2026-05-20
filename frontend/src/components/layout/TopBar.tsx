@@ -12,70 +12,58 @@ export default function TopBar() {
     <>
       <header
         id="topbar"
-        className="flex h-12 shrink-0 items-center justify-between px-5"
-        style={{
-          backgroundColor: 'var(--bg-surface)',
-          borderBottom: '1px solid var(--border-subtle)',
-        }}
+        className="flex h-11 shrink-0 items-center justify-between px-5"
+        style={{ background: 'var(--bg-raised)', borderBottom: '1px solid var(--hairline)' }}
       >
-        <span className="font-mono text-xs font-medium tracking-wide text-zinc-500">
-          AI-Powered Assembly Behavior Analysis
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--fg-3)', letterSpacing: '.06em' }}>
+          Assembly behavior analysis
         </span>
 
         <div className="flex items-center gap-3">
-          <label htmlFor="sample-select" className="text-xs text-zinc-600">
-            Sample:
+          <label
+            htmlFor="sample-select"
+            style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--fg-muted)', letterSpacing: '.1em', textTransform: 'uppercase' }}
+          >
+            Sample
           </label>
           <select
             id="sample-select"
             value={activeSample?.id ?? ''}
-            onChange={(e) => {
-              const sample = SAMPLES[e.target.value]
-              if (sample) setActiveSample(sample)
-            }}
-            className="rounded-md px-2 py-1 text-xs text-zinc-300 focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
-            style={{
-              backgroundColor: 'var(--bg-elevated)',
-              border: '1px solid var(--border-subtle)',
-            }}
+            onChange={e => { const s = SAMPLES[e.target.value]; if (s) setActiveSample(s) }}
+            className="inp"
+            style={{ padding: '4px 8px', fontSize: 12 }}
           >
-            <option value="">— select a sample —</option>
-            {SAMPLE_IDS.map((id) => (
-              <option key={id} value={id}>
-                {SAMPLES[id].displayName}
-              </option>
+            <option value="">— select —</option>
+            {SAMPLE_IDS.map(id => (
+              <option key={id} value={id}>{SAMPLES[id].displayName}</option>
             ))}
           </select>
 
           {user ? (
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 rounded-md px-2.5 py-1" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)' }}>
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                <span className="text-xs text-zinc-300">
-                  {user.display_name ?? user.email}
-                </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--fg-3)' }}>
+                {user.display_name ?? user.email}
                 {user.is_professor && (
                   <span
-                    className="ml-0.5 rounded px-1.5 py-0.5 text-[10px] font-bold text-indigo-300"
-                    style={{ background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.25)' }}
+                    className="ml-1.5"
+                    style={{
+                      fontFamily: 'var(--font-mono)', fontSize: 9, fontWeight: 600,
+                      letterSpacing: '.14em', textTransform: 'uppercase',
+                      color: 'var(--ochre-300)',
+                      background: 'rgba(184,146,74,.12)',
+                      border: '1px solid rgba(184,146,74,.3)',
+                      borderRadius: 'var(--r-sm)',
+                      padding: '2px 5px',
+                    }}
                   >
-                    PROF
+                    Prof
                   </span>
                 )}
-              </div>
-              <button
-                onClick={logout}
-                className="rounded-md px-2.5 py-1 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
-                style={{ border: '1px solid var(--border-subtle)' }}
-              >
-                Sign out
-              </button>
+              </span>
+              <button className="btn btn-ghost btn-sm" onClick={logout}>Sign out</button>
             </div>
           ) : (
-            <button
-              onClick={() => setShowLogin(true)}
-              className="btn-primary rounded-md px-3 py-1 text-xs font-semibold text-white"
-            >
+            <button className="btn btn-primary btn-sm" onClick={() => setShowLogin(true)}>
               Sign in
             </button>
           )}

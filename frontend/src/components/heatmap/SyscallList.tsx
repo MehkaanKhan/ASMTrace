@@ -1,28 +1,27 @@
 import type { SyscallEvent } from '../../types/trace'
 
-interface SyscallListProps {
-  syscalls: SyscallEvent[]
-}
-
-export default function SyscallList({ syscalls }: SyscallListProps) {
+export default function SyscallList({ syscalls }: { syscalls: SyscallEvent[] }) {
+  const cellStyle = { padding: '6px 14px', borderBottom: '1px solid var(--hairline)' }
   return (
-    <div className="overflow-y-auto rounded-lg border border-zinc-800 bg-zinc-900">
-      <table className="w-full font-mono text-xs">
+    <div style={{ border: '1px solid var(--hairline)', borderRadius: 'var(--r-md)', overflow: 'hidden' }}>
+      <table style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: 12, borderCollapse: 'collapse' }}>
         <thead>
-          <tr className="border-b border-zinc-800 text-left text-zinc-500">
-            <th className="px-3 py-2">Step</th>
-            <th className="px-3 py-2">Syscall</th>
-            <th className="px-3 py-2">Category</th>
-            <th className="px-3 py-2">Return</th>
+          <tr style={{ background: 'rgba(255,255,255,.02)' }}>
+            {['Step','Syscall','Category','Return'].map(h => (
+              <th key={h} style={{ ...cellStyle, textAlign: 'left', color: 'var(--fg-muted)', fontWeight: 600, fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase' }}>{h}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
           {syscalls.map((sc, i) => (
-            <tr key={i} className="border-b border-zinc-800/60 hover:bg-zinc-800/40">
-              <td className="px-3 py-1.5 text-zinc-600">{sc.index}</td>
-              <td className="px-3 py-1.5 font-bold text-red-400">{sc.name}</td>
-              <td className="px-3 py-1.5 text-zinc-400">{sc.category}</td>
-              <td className="px-3 py-1.5 text-zinc-500">{sc.returnValue}</td>
+            <tr key={i}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,.02)'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
+            >
+              <td style={{ ...cellStyle, color: 'var(--fg-muted)' }}>{sc.index}</td>
+              <td style={{ ...cellStyle, fontWeight: 600, color: 'var(--oxblood-300)' }}>{sc.name}</td>
+              <td style={{ ...cellStyle, color: 'var(--fg-3)' }}>{sc.category}</td>
+              <td style={{ ...cellStyle, color: 'var(--fg-muted)' }}>{sc.returnValue}</td>
             </tr>
           ))}
         </tbody>
